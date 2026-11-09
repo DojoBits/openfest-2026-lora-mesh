@@ -1,0 +1,4 @@
+# PLACEHOLDER: replace with real output from the two demo nodes (2.7.26),
+# captured across a real distance (two rooms / two buildings), not 2 m apart:
+#   meshtastic --port <node A> --traceroute '!<node B id>'
+# Paste the full output below this line; slide „Тест: traceroute“ takes its SNR values from here.

@@ -1,0 +1,48 @@
+# =============================================================================
+# repeater.txt — MeshCore repeater: CLI настройки (серийна конзола / remote admin)
+#
+# Verified 2026-10-19 against MeshCore v1.18.0 (latest stable, 2026-10-15).
+# Source: https://github.com/meshcore-dev/MeshCore/blob/main/docs/cli_commands.md
+# Това НЕ е скрипт: команди, които се въвеждат една по една
+# (серийна конзола от https://config.meshcore.io или remote admin от app-а).
+# Командите, отбелязани "Serial Only" в docs, работят само през USB конзола.
+# =============================================================================
+
+# --- slide excerpt start --- (слайд 46b, скрит; без `set radio`)
+set freq 869.618
+region put bg
+region save
+set path.hash.mode 1
+set loop.detect minimal
+neighbors
+# --- slide excerpt end ---
+
+# set freq: MHz, default 869.618 за EU/UK "narrow" профила; изисква reboot.
+# 869.618 MHz с bw 62.5 kHz попада в 869.4-869.65 MHz (10 % duty cycle).
+
+# region put <name> [parent]: прилага region scope; след редакция `region save`
+# за да се запише. Flood пакети с друг scope не се препредават.
+region save
+
+# set flood.max: най-много hop-ове за flood пакет (0-64, default 64).
+# 3 държи шума на местната мрежа ниско. Като по-мека алтернатива за пакети
+# без scope: set flood.max.unscoped 3
+
+# neighbors: до 8 последни advert-а, формат {pubkey-prefix}:{timestamp}:{snr*4}
+# stats-radio: noise floor, last RSSI/SNR, airtime (Serial Only)
+stats-radio
+
+# Само repeater-ите препредават; клиентите - никога (set repeat on е default).
+set repeat on
+set name Repeater-Demo
+
+# Мощността е легално ограничена. EU 869.4-869.65: макс 27 dBm ERP.
+# Параметърът контролира само чипа; за PA-платки виж ръководството.
+# set tx 14
+
+# `set radio <freq>,<bw>,<sf>,<cr>` — EU/UK (Narrow) preset, както в приложението
+# и на meshcore.bg: 869.618 MHz, BW 62.5 kHz, SF8, CR 4/8.
+# Firmware default-ът е CR 4/5; coding rate се носи в LoRa header-а, така че
+# CR5 и CR8 възли се декодират взаимно (Semtech datasheet; виж research/T9a).
+# Честотата, BW и SF трябва да съвпадат в цялата мрежа. Изисква reboot.
+set radio 869.618,62.5,8,8

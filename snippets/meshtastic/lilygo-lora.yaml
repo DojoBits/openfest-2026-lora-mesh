@@ -1,0 +1,14 @@
+# LilyGO T-LoRa V2.1-1.6 (owner UniXSouL), firmware 2.7.26, exported 2026-11-07
+config:
+  lora:
+    bandwidth: 250
+    codingRate: 5
+    configOkToMqtt: true
+    hopLimit: 3
+    modemPreset: SHORT_FAST
+    region: EU_868
+    spreadFactor: 7
+    sx126xRxBoostedGain: true
+    txEnabled: true
+    txPower: 27
+    usePreset: true

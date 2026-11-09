@@ -1,0 +1,19 @@
+[
+  { "id": "kanarche", "url": "https://kanarche.eu/", "label": "kanarche.eu" },
+  { "id": "repo", "url": "https://github.com/dojobits/openfest-2026-lora-mesh", "label": "Слайдове и конфигурации" },
+  { "id": "meshcore-bg", "url": "https://www.meshcore.bg/", "label": "meshcore.bg" },
+  { "id": "meshcore-discord", "url": "https://discord.com/invite/meshcore", "label": "MeshCore Discord (global)" },
+  { "id": "meshcore-reddit", "url": "https://www.reddit.com/r/meshcore/", "label": "r/meshcore (global)" },
+  { "id": "meshtastic-discord", "url": "https://discord.gg/ktMAKGBnBs", "label": "Meshtastic Discord (global)" },
+  { "id": "meshtastic-reddit", "url": "https://www.reddit.com/r/meshtastic/", "label": "r/meshtastic" },
+  { "id": "meshcore-bg-fb", "url": "https://www.facebook.com/groups/1555471979162054/", "label": "MeshCore Bulgaria (Facebook)" },
+  { "id": "varna", "url": "https://mesh.varna.radio/", "label": "mesh.varna.radio" },
+  { "id": "meshmap", "url": "https://meshmap.motaba.net/", "label": "meshmap.motaba.net" },
+  { "id": "motaba", "url": "https://mesh.motaba.net/", "label": "mesh.motaba.net" },
+  { "id": "local-groups", "url": "https://meshtastic.org/docs/community/local-groups/", "label": "meshtastic.org/docs/community/local-groups" },
+  { "id": "reticulum", "url": "https://reticulum.network/", "label": "reticulum.network" },
+  { "id": "meshtastic-fb", "url": "https://facebook.com/groups/meshtasticbulgaria", "label": "Meshtastic Bulgaria (Facebook)" },
+  { "id": "meshtastic-flasher", "url": "https://flasher.meshtastic.org/", "label": "flasher.meshtastic.org" },
+  { "id": "meshcore-flasher", "url": "https://flasher.meshcore.io/", "label": "flasher.meshcore.io" },
+  { "id": "rnode-flasher", "url": "https://liamcottle.github.io/rnode-flasher/", "label": "Уеб flasher за RNode" }
+]

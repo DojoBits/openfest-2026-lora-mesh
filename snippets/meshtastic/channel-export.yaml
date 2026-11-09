@@ -1,0 +1,33 @@
+# =============================================================================
+# channel-export.yaml — ПРИМЕР за износ на конфигурация (без истински ключове)
+#
+# Verified 2026-10-19 against Meshtastic Python CLI + firmware v2.7.26.
+# Source: https://meshtastic.org/docs/software/python/cli/  (--export-config,
+#         --configure) and the example in
+#         https://github.com/meshtastic/python/blob/master/example_config.yaml
+# Генериране:   meshtastic --export-config > node.yaml
+# Прилагане:    meshtastic --configure node.yaml
+# Ключовете във файла са camelCase за config.* (както в примера на проекта).
+# Реалният износ съдържа channel_url с PSK вътре -> НИКОГА не комитвайте
+# истински износ. Тук URL-ът е умишлено невалиден placeholder.
+# =============================================================================
+
+# --- slide excerpt start --- (по желание, слайд 45/46b; 7 реда)
+owner: OF-A
+owner_short: OFA
+channel_url: https://meshtastic.org/e/#PLACEHOLDER_NOT_A_REAL_KEY
+config:
+  lora:
+    region: EU_868        # 869.4-869.65 MHz, duty cycle 10 %
+    modemPreset: LONG_FAST
+# --- slide excerpt end ---
+    usePreset: true
+    hopLimit: 3           # по подразбиране 3; повече hop-ове = повече airtime
+    txPower: 0            # 0 = максимумът, легален за региона
+  bluetooth:
+    enabled: true
+    mode: FIXED_PIN
+    fixedPin: 000000      # placeholder; реалният PIN е случаен (setup-node.sh)
+module_config:
+  mqtt:
+    enabled: false        # privacy: демото не се качва в интернет

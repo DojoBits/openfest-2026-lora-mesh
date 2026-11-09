@@ -1,0 +1,48 @@
+# =============================================================================
+# ~/.reticulum/config — Reticulum с RNode (LoRa) + Auto (локален Wi-Fi/Ethernet)
+#
+# Verified 2026-10-19 against Reticulum (RNS) 1.5.5 manual.
+# Source: https://reticulum.network/manual/interfaces.html  (RNode LoRa Interface,
+#         AutoInterface) and https://reticulum.network/manual/using.html
+# Файлът е INI-подобен; [[...]] са интерфейси.
+# =============================================================================
+
+[reticulum]
+  # false = този хост НЕ препредава чужд трафик (transport node е за
+  # стационарни, винаги включени възли; виж manual "Transport Nodes").
+  enable_transport = No
+  share_instance = Yes
+
+[interfaces]
+
+  # Открива съседи по Wi-Fi/Ethernet без конфигурация (IPv6 link-local + UDP).
+  [[Default Interface]]
+    type = AutoInterface
+    enabled = Yes
+
+  # --- slide excerpt start --- (слайд 46b, скрит; 6 реда)
+  [[RNode LoRa Interface]]
+    type = RNodeInterface
+    port = /dev/ttyACM0
+    frequency = 869525000
+    bandwidth = 125000
+    spreadingfactor = 8
+    txpower = 14
+    codingrate = 5
+  # --- slide excerpt end ---
+    enabled = Yes
+
+    # ПРИМЕР - ВСИЧКИ възли в тази LoRa мрежа трябва да имат еднакви
+    # frequency/bandwidth/spreadingfactor/codingrate. Стойностите са избор на
+    # автора за EU 868 (sub-band 869.4-869.65 MHz, 10 % duty cycle, до 27 dBm ERP):
+    # 125 kHz канал около 869.525 MHz се побира целият в sub-band-а.
+    # frequency: Hz.  bandwidth: Hz.  txpower: dBm (14 = 25 mW; под лимита).
+
+    # port може да е и Bluetooth LE: ble://RNode 3B87  или  ble:// (първия
+    # сдвоен) — RNode трябва първо да е сдвоен с хоста.
+    # port = ble://
+
+    # Ограничение на ефира, за да спазим duty cycle 10 %.
+    # Дългият прозорец е 60 мин (rolling), късият ~15 s. Стойности в проценти.
+    airtime_limit_long = 10
+    # airtime_limit_short = 33

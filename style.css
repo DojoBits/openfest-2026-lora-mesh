@@ -1,0 +1,392 @@
+/* Auto-loaded by Slidev. Owns body/list/diagram sizing deck-wide —
+   slides should not set per-slide font sizes. */
+
+/* ── Colour theme: the slide-5 journey map, deck-wide ─────────────────────────
+   One palette for every slide: parchment paper, brown ink, trail-red rubric.
+   The parchment / ink / trail values are the exact hexes AgendaJourney.vue,
+   JourneyIcons.vue, MapGlyphs.vue and MapPerils.vue draw with (tests/theme.test.ts
+   checks they match), so slide 5 and the rest of the deck are one palette.
+
+   Stored as bare "R G B" channels, not hex, so UnoCSS can add alpha:
+   uno.config.ts maps `ink` → `rgb(var(--c-ink) / <alpha-value>)`, which makes
+   `bg-trail/10` and `border-earth/50` work. Because the variable itself swaps
+   under `html.dark`, a token class is already scheme-aware; the `dark:` twins in
+   tones.ts exist only where the two schemes want different alpha.
+
+   `-deep` variants exist for tones whose fill shade is too pale to read as
+   text on parchment (gold, stone, earth): text uses -deep, shapes the base. */
+:root {
+  --c-page: 250 244 228;         /* #faf4e4  slide background: a shade lighter than the map so the map still reads as a sheet */
+  --c-parchment: 243 231 201;    /* #f3e7c9  map mid-tone = card fill */
+  --c-parchment-hi: 246 236 208; /* #f6ecd0  map centre */
+  --c-parchment-lo: 214 188 134; /* #d6bc86  map scorched edge */
+  --c-ink: 74 53 32;          /* #4a3520  map ink: strokes, titles */
+  --c-ink-strong: 58 40 20;   /* #3a2814  map labels = body text */
+  --c-trail: 139 30 30;        /* #8b1e1e  trail red / wax seal = "bad, risk" */
+  --c-earth: 176 138 90;        /* #b08a5a  earth fill (club, ground) */
+  --c-earth-deep: 122 90 54;   /* #7a5a36  earth as readable text */
+  --c-gold: 240 160 48;         /* #f0a030  fire / gold fill = "warn, decision" */
+  --c-gold-deep: 138 90 18;    /* #8a5a12  gold as readable text */
+  --c-stone: 138 132 120;        /* #8a8478  troll stone = neutral fill */
+  --c-stone-deep: 94 88 77;   /* #5e584d  neutral readable text */
+  --c-moss: 74 107 36;         /* #4a6b24  new: muted map green = "ok, kept" */
+  --c-water: 61 95 122;        /* #3d5f7a  new: river blue = neutral actor / info */
+  --c-verdigris: 44 110 104;    /* #2c6e68  project hue: Meshtastic */
+  /* Content-slide ground (warm white) and the card-shadow colours. Parchment stays
+     on map moments only: cover, agenda, section dividers, Q&A, end. */
+  --c-paper: 254 252 246;       /* #fefcf6 */
+  --c-shadow: 74 53 32;         /* = ink: a brown shadow belongs on parchment */
+  --c-lip: 214 188 134;         /* = parchment-lo: the sheet's lower edge */
+  --c-dusk: 90 67 131;         /* #5a4383  project hue: MeshCore */
+  --c-wine: 138 47 98;         /* #8a2f62  project hue: Reticulum */
+}
+
+html.dark {
+  --c-page: 28 20 12;         /* #1c140c */
+  --c-parchment: 51 38 26;    /* #33261a */
+  --c-parchment-hi: 58 43 28; /* #3a2b1c */
+  --c-parchment-lo: 42 31 20; /* #2a1f14 */
+  --c-ink: 232 213 176;          /* #e8d5b0 */
+  --c-ink-strong: 240 224 189;   /* #f0e0bd */
+  --c-trail: 217 83 79;        /* #d9534f */
+  --c-earth: 110 84 52;        /* #6e5434 */
+  --c-earth-deep: 217 185 138;   /* #d9b98a */
+  --c-gold: 232 166 64;         /* #e8a640 */
+  --c-gold-deep: 240 184 96;    /* #f0b860 */
+  --c-stone: 111 105 94;        /* #6f695e */
+  --c-stone-deep: 194 185 168;   /* #c2b9a8 */
+  --c-moss: 156 194 122;         /* #9cc27a */
+  --c-water: 143 179 204;        /* #8fb3cc */
+  --c-verdigris: 111 193 181;    /* #6fc1b5 */
+  --c-paper: 22 19 15;           /* #16130f: cleaner than the map's #1c140c */
+  --c-shadow: 6 4 2;             /* ink is light in dark mode, so shadows need their own near-black */
+  --c-lip: 10 7 4;
+  --c-dusk: 180 156 224;         /* #b49ce0 */
+  --c-wine: 224 138 187;         /* #e08abb */
+}
+
+/* ── Section accent (variant B) ───────────────────────────────────────────────
+   Role tokens. They are declared on every slide page, not on :root, so the
+   `var()` resolves per slide: re-pointing `--c-accent` on one `.slidev-page`
+   re-colours that slide's edges and focus too. The defaults are the plain
+   map look (earth edges, no accent). The map tokens referenced here already
+   swap under html.dark, so every role has its dark twin for free. */
+.slidev-page {
+  --c-accent: var(--c-trail);
+  --c-accent-ink: var(--c-trail);
+  --c-edge: var(--c-earth);
+  --c-focus: var(--c-earth-deep);
+}
+
+/* Journey stop -> accent. slide-bottom.vue puts a hidden `.stop-probe[data-stop=N]`
+   as the first child of every slide page; `:has()` lets the page itself react to
+   that child, so one rule re-colours the whole slide (deck, presenter, export).
+   --c-accent is the shape colour, --c-accent-ink the text-safe shade (differs only
+   for gold, too pale as text). Wine (stop 4) was dropped: it is Reticulum's hue
+   and reads as the red titles; verdigris is used instead.
+   Selectors start with `html .slidev-page` so they out-rank the defaults above. */
+html .slidev-page:has(.stop-probe[data-stop="1"]) { /* Какво е LoRa? */
+  --c-accent: var(--c-water);
+  --c-accent-ink: var(--c-water);
+}
+html .slidev-page:has(.stop-probe[data-stop="2"]) { /* Как работи? (радио) */
+  --c-accent: var(--c-moss);
+  --c-accent-ink: var(--c-moss);
+}
+html .slidev-page:has(.stop-probe[data-stop="3"]) { /* Как да започна? */
+  --c-accent: var(--c-gold);
+  --c-accent-ink: var(--c-gold-deep);
+}
+html .slidev-page:has(.stop-probe[data-stop="4"]) { /* Как да се свържем? */
+  --c-accent: var(--c-verdigris);
+  --c-accent-ink: var(--c-verdigris);
+}
+
+/* Content slides = every layout that is not a map moment (cover, section, Q&A,
+   agenda `class: map`, end). They get the warm-white ground. Redefining --c-page
+   (instead of painting a new background) matters: the stacking-recipe overlays
+   (`bg-page`) and QR frames read the same variable and follow with no change. */
+html .slidev-page .slidev-layout:not(.cover, .section, .qa, .map, .end) {
+  --c-page: var(--c-paper);
+}
+
+/* Cards and chips take the stop accent (edge), the one highlighted card or strip
+   takes the accent ink (focus). Skipped on stop 0 (intro/close have no section).
+   The shortcut alpha (/60, /80) keeps an outline quieter than the focus stroke. */
+html .slidev-page:not(:has(.stop-probe[data-stop="0"])) .slidev-layout:not(.cover, .section, .qa, .map, .end) {
+  --c-edge: var(--c-accent);
+  --c-focus: var(--c-accent-ink);
+}
+
+/* Title marker: a short accent bar under the h1, only on slides inside a stop. */
+html .slidev-page:not(:has(.stop-probe[data-stop="0"])) .slidev-layout:not(.cover, .section, .qa, .map, .end) > h1::after,
+html .slidev-page:not(:has(.stop-probe[data-stop="0"])) .slidev-layout.two-columns .col-left > h1::after {
+  content: '';
+  display: block;
+  width: 4rem;
+  height: 6px;
+  margin-top: 0.55rem;
+  border-radius: 3px;
+  background: rgb(var(--c-accent));
+}
+
+/* Card depth, content slides only. Two shadows from tokens: a 2 px parchment-lo
+   lip right under the card (the sheet's thickness) and a wide, faint ink blur. */
+html .slidev-page .slidev-layout:not(.cover, .section, .qa, .map, .end) :is(.card, .card-surface) {
+  box-shadow:
+    0 2px 0 rgb(var(--c-lip) / 0.55),
+    0 14px 28px -18px rgb(var(--c-shadow) / 0.45);
+}
+/* SVG-drawn cards (LoraLayers strips and panels): drop-shadow follows the
+   rounded rect, which box-shadow on an SVG child cannot. */
+html .slidev-page .slidev-layout:not(.cover, .section, .qa, .map, .end) svg rect.fill-parchment {
+  filter: drop-shadow(0 6px 8px rgb(var(--c-shadow) / 0.16));
+}
+
+/* Titles (seriph colours every h1 with --slidev-theme-primary, seriph's default is a teal-grey)
+   in trail red: the rubric of an old map. 8.3:1 on the light page, 4.6:1 on the
+   dark one; titles are large text, so both clear AA. `html:root` outranks the
+   theme's own `:root` rule whichever stylesheet loads last. */
+html:root {
+  --slidev-theme-primary: rgb(var(--c-trail));
+  --slidev-code-background: rgb(var(--c-parchment));
+  --slidev-code-foreground: rgb(var(--c-ink-strong));
+}
+
+/* Every slide on the page colour, body text in label ink (12.8:1 / 13.9:1).
+   Cover and end override this further down (pinned light with their artwork). */
+.slidev-layout {
+  background-color: rgb(var(--c-page));
+  color: rgb(var(--c-ink-strong));
+}
+
+/* Title pinned top, body block centred in the remaining space.
+   Scoped to `default`: section/statement/center/cover/end already centre
+   themselves and must not be touched. */
+.slidev-layout.default {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  align-items: center;
+}
+
+/* Body type sized for a projector, not a laptop. Covers `two-cols` as well as
+   `default`: the bullet column on a split slide must match the body size used
+   everywhere else, or those bullets read small next to the visual beside them.
+   Only the left `ul` has list items; the right-column visuals are divs, so this
+   never touches them.
+
+   `line-height` is the *intra*-bullet leading and the gap between bullets rides
+   on `margin`, not on the line-height — otherwise a bullet that wraps to a second
+   line spaces its own two lines as far apart as two separate bullets, so the wrap
+   reads as a new bullet. Tight leading keeps a wrapped bullet visually one unit;
+   the margin re-opens the air between bullets that the old 1.9 leading gave. */
+.slidev-layout.default ul > li,
+.slidev-layout.two-columns ul > li {
+  font-size: 1.6rem;
+  line-height: 1.35;
+  margin-bottom: 1rem;
+}
+
+/* Mermaid renders into a shadow root, so this can only reach the host
+   element — enough to centre it and let it take the full content width.
+   No slide uses mermaid any more, but setup/mermaid.ts is still wired up. */
+.mermaid {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+/* Excalidraw drawings are inlined as real SVG in the light DOM (see
+   components/Drawing.vue), which is the whole reason CSS can reach them. */
+.excalidraw-drawing {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.excalidraw-drawing svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Title-slide artwork.
+
+   It lives on a pseudo-element rather than on `.slidev-layout.cover` itself
+   because seriph's cover layout writes its background into the element's inline
+   `style` attribute, and inline styles outrank any stylesheet rule. With
+   `background: '#00000000'` in the frontmatter that inline rule is the shorthand
+   `background: #00000000`, which also resets `background-image: none` — so an
+   image set here would be overridden. A ::before cannot be reached by an inline
+   style attribute, so it wins by construction.
+
+   Two files rather than one recoloured by CSS: an SVG referenced as a
+   background-image renders in an isolated context that page CSS cannot style,
+   which is exactly the opposite of the inlined Excalidraw drawings. Keep the two
+   geometrically identical and edit them together. */
+/* `z-index: 0` is load-bearing, not decoration: it makes the cover establish a
+   stacking context so the ::before below can sit at -1 and land *behind the
+   slide content but in front of the cover's own background*. Without it the
+   pseudo-element drops behind the slide container's background and disappears.
+   Doing it this way also leaves the slot content unpositioned, so an `absolute`
+   footer inside the slot anchors to the slide — an earlier version positioned
+   the slot wrapper instead and the footer anchored to that, landing mid-slide. */
+.slidev-layout.cover {
+  position: relative;
+  z-index: 0;
+}
+
+.slidev-layout.cover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: url('/cover-light.svg') center / cover no-repeat;
+}
+
+/* The title slide is light in both schemes, deliberately. It is the slide on
+   screen while the room is still filling and the speaker is being introduced,
+   and a lit auditorium washes out dark backgrounds. So the dark-mode toggle is
+   overridden here — text is pinned dark rather than inheriting white, which it
+   would otherwise do and vanish against the light artwork. */
+.dark .slidev-layout.cover {
+  color: #1e1e1e;
+}
+
+/* Slidev's builtin `end` layout hardcodes `bg-black text-white` with no `dark:`
+   counterpart, so the closing slide stayed black in light mode — the one scheme
+   the room is actually lit for.
+
+   The closing slide bookends the cover: it carries the same `cover-light.svg`
+   artwork (below) and is pinned light in both schemes for the *same* reason the
+   cover is — it is on screen through the whole Q&A while the auditorium is lit,
+   and it is the slide the room photographs. So there is no `.dark` counterpart
+   any more; text stays dark-on-light regardless of the toggle, exactly like the
+   title slide.
+
+   The repeated class is deliberate. That rule is scoped, i.e. it ships as
+   `.slidev-layout.end[data-v-…]` (specificity 0,3,0), so a plain
+   `.slidev-layout.end` (0,2,0) loses. An id would win but the container id
+   differs between the deck (`#slideshow`) and export (`#print-container`),
+   which would silently drop the fix from the PDF. Repeating the class gets to
+   (0,4,0) and is independent of what wraps the slide.
+
+   `position`/`z-index` are load-bearing, not decoration — same trick as the
+   cover: they make the slide establish a stacking context so the `::before`
+   artwork below can sit at -1, behind the content but in front of this base
+   fill. Without it the pseudo-element drops behind the slide container and
+   disappears. */
+.slidev-layout.end.end.end {
+  background-color: #ffffff;
+  color: rgba(0, 0, 0, 0.85);
+  position: relative;
+  z-index: 0;
+}
+
+/* Bookend artwork, reusing the cover's file so the deck opens and closes on the
+   identical composition. Vendored SVG, inlined as a background-image — nothing
+   is fetched at render time, so it survives venue wifi and headless export.
+   Kept on a pseudo-element rather than the frontmatter `background:` for the
+   same reason the cover is: an inline `background` shorthand also resets
+   `background-image: none`, and a ::before is the one thing an inline style
+   attribute cannot reach. */
+.slidev-layout.end::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: url('/cover-light.svg') center / cover no-repeat;
+}
+
+/* The closing title is the one large word on the slide. Seriph's `.slidev-layout h1`
+   (0,1,1) sets 2.25rem and beats any utility class (`text-8xl` is 0,1,0 and was
+   silently ignored), so the size is set here instead: `.slidev-layout.end h1` is
+   (0,2,1) and wins. 8rem = 128px; line-height 1 keeps the box tight so the QR,
+   URL and name row below still fit on the slide. */
+.slidev-layout.end h1 {
+  font-size: 8rem;
+  line-height: 1;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+/* Code comments are content on these slides, not decoration — they carry the
+   explanation the audience would otherwise only get from the spoken track. But
+   vitesse-light greys comments to #A0ADA0, which is 2.15:1 on the #f5f5f5 code
+   background: under AA, and the first thing a washed-out projector loses.
+
+   Shiki is in dual-theme mode, so a token's colour is not a `color` declaration
+   at all — it is a `--shiki-light` / `--shiki-dark` custom property written into
+   each span's *inline style attribute*, which the theme then reads. That means
+   two things: the tokens can only be selected by their inline value, and the
+   override needs `!important`, since an inline custom property otherwise beats
+   any stylesheet rule. Matching on the colour string is what keeps this scoped
+   to comment tokens without touching the rest of the palette.
+
+   Green, and green in both schemes — but not the *same* green. "Dark green" is
+   only a legible instruction against a light background; on the dark scheme's
+   #1b1b1b code block a true dark green is near-invisible. So the light scheme
+   gets green-800 (5.8:1 on the parchment code background) and the dark scheme a
+   desaturated mid green (6.6:1 on dark parchment): one hue family, each end tuned to its own background.
+   Both are held well above AA but deliberately short of vivid — a comment that
+   reads as loud as the code it annotates is its own problem. */
+.slidev-code span[style*="--shiki-light: #A0ADA0"] {
+  --shiki-light: #166534 !important;
+}
+
+.slidev-code span[style*="--shiki-dark: #758575DD"] {
+  --shiki-dark: #6bbf8a !important;
+}
+
+/* Excalidraw bakes its ink colour into the file, so dark mode is a recolour
+   rather than a second export of every drawing. The whole palette here is one
+   ink; add a rule per colour if a drawing ever uses the accent swatches. */
+.dark .excalidraw-drawing [stroke="#1e1e1e"] {
+  stroke: #e5e5e5;
+}
+
+.dark .excalidraw-drawing [fill="#1e1e1e"] {
+  fill: #e5e5e5;
+}
+
+/* Animated components (components/*.vue) all carry `.lora-viz` on their root.
+   Their motion is step-driven opacity/position transitions plus the one
+   storyboard-sanctioned loop (ChirpWave, NoiseFloor jitter); a viewer who
+   asked the OS for reduced motion gets every step as an instant cut. */
+/* Bluetooth hop, the same everywhere (HookSwitch, LinkChain, DemoRig): blue
+   dotted line whose dots drift along it. Arrowheads at both ends are drawn by
+   each component (SVG marker or caret icons). Frozen by the reduced-motion
+   rule below, like every .lora-viz animation. */
+.ble-link {
+  stroke-dasharray: 2 12;
+  stroke-linecap: round;
+  animation: ble-flow 1.2s linear infinite;
+}
+@keyframes ble-flow {
+  to { stroke-dashoffset: -28; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lora-viz,
+  .lora-viz * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* Q&A slide (pages/13-qa.md): the one large word, like the end slide. Seriph's
+   `.slidev-layout h1` (0,1,1) beats `text-8xl`, so the size is set here;
+   `.slidev-layout.qa h1` is (0,2,1) and wins. Not pinned light: map tokens only. */
+.slidev-layout.qa {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+.slidev-layout.qa h1 {
+  font-size: 7.5rem;
+  line-height: 1;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+}
